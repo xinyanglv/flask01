@@ -1,16 +1,69 @@
 from flask import url_for
 from markupsafe import escape
 from flask import Flask
+from flask import Flask, render_template
+
+from flask import request
+
 app = Flask(__name__)
 # ...
+name = 'Grey Li'
+movies = [
+    {'title': 'My Neighbor Totoro', 'year': '1988'},
+    {'title': 'Dead Poets Society', 'year': '1989'},
+    {'title': 'A Perfect World', 'year': '1993'},
+    {'title': 'Leon', 'year': '1994'},
+    {'title': 'Mahjong', 'year': '1996'},
+    {'title': 'Swallowtail Butterfly', 'year': '1996'},
+    {'title': 'King of Comedy', 'year': '1999'},
+    {'title': 'Devils on the Doorstep', 'year': '1999'},
+    {'title': 'WALL-E', 'year': '2008'},
+    {'title': 'The Pork of Music', 'year': '2012'},
+]
+
 
 @app.route('/')
-def hello():
-    return 'Hello'
+def index():
+    return render_template('index.html', name=name, movies=movies)
+    # return render_template('hello.html')
 
-@app.route('/user/<name>')
-def user_page(name):
-    return f'User: {escape(name)}'
+
+
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['the_file']
+        f.save('/mnt/mmc1-4/job/flask01/uploads/uploaded_file.txt')
+
+
+
+@app.route('/user/<username>')
+def profile(username):
+    return f'{username}\'s profile'
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        return do_the_login()
+    else:
+        return show_the_login_form()
+# #或者把不同的方法放在不同的视图函数中，FLask为每个方法指定了一个URL
+# @app.get('/login')
+# def login_get():
+#     return show_the_login_form()
+
+# @app.post('/login')
+# def login_post():
+#     return do_the_login()
+
+# with app.test_request_context():
+#     print(url_for('index'))
+#     print(url_for('login'))
+#     print(url_for('login', next='/'))
+#     print(url_for('profile', username='John Doe'))
 
 @app.route('/test')
 def test_url_for():
